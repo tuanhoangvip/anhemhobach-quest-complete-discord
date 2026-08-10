@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Quest Auto Completer | Remastered Web UI by AEHB</title>
+    <meta name="description" content="Discord Quest Auto Completer - Giải pháp tự động hóa stream treo nhận thưởng Discord Quest an toàn 100% được tối ưu và thiết kế bởi ANH EM HỌ BÁCH(AEHB). Không cần cài game, hoạt động mượt mà trực tiếp trên trình duyệt.">
+    <meta name="keywords" content="discord quest, discord quest auto, discord quest completer, AEHB, discord auto stream, treo quest discord, tự động discord quest, discord quest auto ANH EM HỌ BÁCH(AEHB), discord quest completion bot, discord bot, tool auto discord quest, stream discord quest auto">
+    <meta name="author" content="AEHB">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Discord Quest Auto Completer | Web UI by AEHB">
+    <meta property="og:description" content="Tự động hóa hoàn toàn quá trình stream hoàn thành các nhiệm vụ Discord Quest cực kỳ nhanh chóng và an toàn. Remastered Web UI thiết kế bởi AEHB.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/static/logo-dark.svg">
+    <meta property="og:site_name" content="Discord Quest Auto Completer by AEHN">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Discord Quest Auto Completer | Web UI by AEHB">
+    <meta name="twitter:description" content="Tự động treo hoàn thành nhiệm vụ Discord Quest an toàn, tối ưu bởi AEHB.">
+    <meta name="twitter:image" content="/static/logo-dark.svg">
+    <link rel="icon" type="image/svg+xml" href="/static/logo-light.svg" media="(prefers-color-scheme: light)">
+    <link rel="icon" type="image/svg+xml" href="/static/logo-dark.svg" media="(prefers-color-scheme: dark)">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://unpkg.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Schema Markup JSON-LD for SEO by AEHB (II.1) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Discord Quest Auto Completer",
+      "url": "https://discord.gg/anhemhobach",
+      "description": "Giải pháp tự động hóa stream treo nhận thưởng Discord Quest an toàn 100% được tối ưu và thiết kế bởi AEHB.",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "All",
+      "author": {
+        "@type": "Person",
+        "name": "AEHB(ANH EM HỌ BÁCH)",
+        "url": "https://discord.gg/anhemhobach"
+      }
+    }
+    </script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Roboto Mono', 'monospace'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            green: '#00C853',
+                            red: '#d50000',
+                            warn: '#ffab00',
+                            info: '#00b0ff',
+                            dark: '#09090B',
+                            light: '#FAFAFA'
+                        }
+                    },
+                    animation: {
+                        blob: "blob 15s infinite",
+                        marquee: 'marquee 25s linear infinite',
+                        'gradient-x': 'gradient-x 3s ease infinite',
+                    },
+                    keyframes: {
+                        'gradient-x': {
+                            '0%, 100%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'left center'
+                            },
+                            '50%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'right center'
+                            }
+                        },
+                        blob: {
+                            "0%": { transform: "translate(0px, 0px) scale(1)" },
+                            "33%": { transform: "translate(30px, -50px) scale(1.1)" },
+                            "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
+                            "100%": { transform: "translate(0px, 0px) scale(1)" }
+                        },
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-100%)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FAFAFA;
+            color: #09090B;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85); /* Tăng độ đục để giảm mỏi mắt và kết hợp hoàn hảo với blur thấp */
+            backdrop-filter: blur(6px); /* Giảm từ 12px xuống 6px để tối ưu GPU và mượt mà hơn khi cuộn */
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255,255,255,1);
+            border-radius: 2rem;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .editorial-text {
+            font-size: clamp(1rem, 1.8vw, 1.4rem);
+            line-height: 1.6;
+            letter-spacing: -0.01em;
+            color: #4B5563;
+        }
+
+        .editorial-text strong {
+            font-weight: 800;
+            color: #09090B;
+        }
+
+        .instruction-code {
+            font-family: 'Roboto Mono', monospace;
+            background-color: rgba(9, 9, 11, 0.05);
+            color: #09090B;
+            padding: 0.2em 0.4em;
+            border-radius: 0.3em;
+            font-size: 0.85em;
+            font-weight: 600;
+            border: 1px solid rgba(9, 9, 11, 0.1);
+        }
+
+        /* --- STYLE 3D SKEUOMORPHIC BUTTONS --- */
+        .btn-3d-dark {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #27272a 0%, #09090b 100%);
+            border: 1px solid #3f3f46;
+            border-bottom: 3px solid #000000;
+            border-radius: 1rem;
+            color: #ffffff;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateY(0);
+            cursor: pointer;
+        }
+        .btn-3d-dark:hover {
+            background: linear-gradient(180deg, #3f3f46 0%, #18181b 100%);
+            transform: translateY(-1px);
+            border-bottom-width: 4px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        .btn-3d-dark:active {
+            transform: translateY(2px);
+            border-bottom-width: 1px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-3d-light {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 100%);
+            border: 1px solid #e4e4e7;
+            border-bottom: 3px solid #d4d4d8;
+            border-radius: 1rem;
+            color: #09090b;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
+            transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateY(0);
+            cursor: pointer;
+        }
+        .btn-3d-light:hover {
+            background: linear-gradient(180deg, #f4f4f5 0%, #e4e4e7 100%);
+            transform: translateY(-1px);
+            border-bottom-width: 4px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1);
+        }
+        .btn-3d-light:active {
+            transform: translateY(2px);
+            border-bottom-width: 1px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-3d-green {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+            border: 1px solid #86efac;
+            border-bottom: 3px solid #14532d;
+            border-radius: 1rem;
+            color: #ffffff;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 8px rgba(22, 163, 74, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateY(0);
+            cursor: pointer;
+        }
+        .btn-3d-green:hover {
+            background: linear-gradient(180deg, #22c55e 0%, #15803d 100%);
+            transform: translateY(-1px);
+            border-bottom-width: 4px;
+            box-shadow: 0 6px 12px rgba(22, 163, 74, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+        .btn-3d-green:active {
+            transform: translateY(2px);
+            border-bottom-width: 1px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-3d-red {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #f87171 0%, #dc2626 100%);
+            border: 1px solid #fca5a5;
+            border-bottom: 3px solid #7f1d1d;
+            border-radius: 1rem;
+            color: #ffffff;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 8px rgba(220, 38, 38, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateY(0);
+            cursor: pointer;
+        }
+        .btn-3d-red:hover {
+            background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+            transform: translateY(-1px);
+            border-bottom-width: 4px;
+            box-shadow: 0 6px 12px rgba(220, 38, 38, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+        .btn-3d-red:active {
+            transform: translateY(2px);
+            border-bottom-width: 1px;
+            box-shadow: 0 1px 2px rgba(220, 38, 38, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-3d-glass {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-bottom: 3px solid rgba(0,0,0,0.5);
+            border-radius: 1rem;
+            color: #ffffff;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.1);
+            transition: all 0.1s ease;
+            transform: translateY(0);
+            cursor: pointer;
+        }
+        .btn-3d-glass:hover {
+            background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+            transform: translateY(-1px);
+            border-bottom-width: 4px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+        .btn-3d-glass:active {
+            transform: translateY(2px);
+            border-bottom-width: 1px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .btn-3d-icon {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 100%);
+            border: 1px solid #e4e4e7;
+            border-bottom: 3px solid #d4d4d8;
+            border-radius: 0.5rem;
+            color: #71717a;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.1s ease;
+            transform: translateY(0);
+            cursor: pointer;
+        }
+        .btn-3d-icon:hover {
+            color: #09090b;
+            transform: translateY(-1px);
+            border-bottom-width: 4px;
+        }
+        .btn-3d-icon:active {
+            transform: translateY(2px);
+            border-bottom-width: 1px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* --- FLOATING HEADER --- */
+        .floating-header {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .floating-header.scrolled {
+            top: 0.75rem !important;
+            width: 96% !important;
+        }
+        @media (min-width: 768px) {
+            .floating-header.scrolled {
+                width: 95% !important;
+            }
+        }
+        .floating-header.scrolled .glass-panel {
+            padding-top: 0.75rem !important;
+            padding-bottom: 0.75rem !important;
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(0, 200, 83, 0.2);
+            box-shadow: 0 10px 30px -10px rgba(0, 200, 83, 0.15);
+        }
+
+        /* Responsive 3D Buttons override for desktop */
+        @media (min-width: 768px) {
+            .btn-3d-dark, .btn-3d-light, .btn-3d-green, .btn-3d-red, .btn-3d-glass {
+                border-bottom-width: 5px !important;
+            }
+            .btn-3d-dark:hover, .btn-3d-light:hover, .btn-3d-green:hover, .btn-3d-red:hover, .btn-3d-glass:hover {
+                transform: translateY(-2px) !important;
+                border-bottom-width: 7px !important;
+            }
+            .btn-3d-dark:active, .btn-3d-light:active, .btn-3d-green:active, .btn-3d-red:active, .btn-3d-glass:active {
+                transform: translateY(4px) !important;
+                border-bottom-width: 1px !important;
+            }
+        }
+
+        .token-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 4px solid #E5E7EB;
+            color: #09090B;
+            padding: 0.5rem 0;
+            outline: none;
+            transition: all 0.4s ease;
+        }
+        .token-input:focus { border-bottom-color: #09090B; }
+        .token-input::placeholder { color: #D1D5DB; }
+
+        .terminal-feed {
+            font-family: 'Roboto Mono', monospace;
+            font-size: clamp(0.75rem, 1vw, 0.95rem);
+            line-height: 1.8;
+            scroll-behavior: smooth;
+            transform: translate3d(0, 0, 0);
+            will-change: scroll-position;
+            backface-visibility: hidden;
+        }
+
+        .log-row {
+            display: grid;
+            grid-template-columns: 75px 1fr;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed rgba(0,0,0,0.05);
+            transition: background-color 0.2s;
+        }
+        @media (min-width: 768px) {
+            .log-row { grid-template-columns: 85px 1fr; gap: 1.5rem; }
+        }
+
+        .fade-in { animation: fadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .gsap-reveal { animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+        @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+
+        .pulse-text { animation: pulseText 2s infinite; }
+        @keyframes pulseText {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        .shake-error {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+            border-bottom-color: #d50000 !important;
+            color: #d50000;
+        }
+
+        .scanlines {
+            position: relative;
+            overflow: hidden;
+        }
+        /* Tối ưu hóa GPU: Loại bỏ grid gradient đan chéo (gây overload render) 
+           và thay bằng các sọc quét ngang 1 chiều siêu mỏng nhẹ nhàng */
+        .scanlines::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.03) 50%);
+            z-index: 10;
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+
+        .glowing-text {
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        ::-webkit-scrollbar { width: 5px; background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #D1D5DB; }
+
+        .status-ring { position: relative; }
+        .status-ring::before {
+            content: ''; position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px;
+            border-radius: 50%; border: 2px solid currentColor; opacity: 0.3;
+            animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen overflow-x-hidden selection:bg-brand-dark selection:text-white relative font-sans">
+
+    <!-- Background Blobs (Global) - Optimized for Performance with GPU Accelerated Radial Gradients -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none opacity-40 md:opacity-60">
+        <div class="absolute top-[-10%] left-[-10%] w-[80vw] md:w-[50vw] h-[80vw] md:h-[50vw] rounded-full bg-[radial-gradient(circle_at_center,rgba(0,200,83,0.12)_0%,transparent_70%)] transform-gpu"></div>
+        <div class="absolute top-[20%] right-[-10%] w-[70vw] md:w-[45vw] h-[70vw] md:h-[45vw] rounded-full bg-[radial-gradient(circle_at_center,rgba(0,176,255,0.12)_0%,transparent_70%)] transform-gpu"></div>
+        <div class="absolute bottom-[-20%] left-[20%] w-[90vw] md:w-[60vw] h-[90vw] md:h-[60vw] rounded-full bg-[radial-gradient(circle_at_center,rgba(216,180,254,0.12)_0%,transparent_70%)] transform-gpu"></div>
+    </div>
+
+    <!-- VIEW 1: INTRO (Contains Marquee and Footer) -->
+    <div id="view-intro" class="flex flex-col w-full min-h-screen">
+        
+        <!-- Floating Header -->
+        <header class="floating-header fixed top-4 left-1/2 -translate-x-1/2 w-[94%] md:w-[90%] max-w-6xl z-50 transition-all duration-300">
+            <div class="glass-panel px-4 py-3 md:px-6 md:py-4 flex items-center justify-between border border-white/40 shadow-lg rounded-2xl bg-white/80 backdrop-blur-md">
+                <!-- Logo / Branding -->
+                <a href="#" class="flex items-center gap-1.5 md:gap-2.5 group">
+                    <svg class="w-6 h-6 md:w-7 md:h-7 text-brand-dark transition-transform group-hover:rotate-12 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+                        <line x1="28" y1="20" x2="28" y2="80" stroke="currentColor" stroke-width="6" stroke-linecap="round" />
+                        <path d="M 28 20 C 56 20, 56 80, 28 80" stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none" />
+                        <circle cx="60" cy="50" r="18" stroke="currentColor" stroke-width="6" fill="none" />
+                        <line x1="60" y1="50" x2="80" y2="30" stroke="currentColor" stroke-width="6" stroke-linecap="round" />
+                        <path d="M 68 30 H 80 V 42" stroke="#00C853" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                    </svg>
+                    <span class="font-display font-black text-[13px] sm:text-lg md:text-xl tracking-tighter text-brand-dark">
+                        DISCORD<span class="text-brand-green animate-pulse">QUEST</span>AUTO
+                    </span>
+                </a>
+                
+                <!-- Navigation Links -->
+                <nav class="hidden md:flex items-center gap-8 font-sans text-xs md:text-sm font-bold uppercase tracking-wider text-gray-500">
+                    <a href="#guide-section" class="hover:text-brand-dark transition-colors">Hướng Dẫn</a>
+                    <a href="https://discord.gg/anhemhobach" target="_blank" class="hover:text-brand-dark transition-colors flex items-center gap-1">
+                        Discord <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                    </a>
+                    <a href="https://discord.gg/anhemhobach" target="_blank" class="hover:text-brand-dark transition-colors flex items-center gap-1">
+                        Discord <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    </a>
+                </nav>
+                
+                <!-- Action Buttons (Discord Stars 3D Button) -->
+                <div class="flex items-center gap-3">
+                    <a id="discord-stars-btn" href="https://discord.gg/anhemhobach" target="_blank" class="btn-3d-dark py-1.5 px-3 md:py-2.5 md:px-5 text-[10px] md:text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all">
+                        <svg class="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+                        </svg>
+                        <span class="hidden sm:inline">discord Repo</span>
+                        <span id="discord-stars-count" class="bg-white/20 text-white px-2 py-0.5 rounded-full text-[9px] font-extrabold ml-1">★ Star</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section (Centered E-Commerce Style) -->
+        <section class="flex flex-col justify-center items-center px-5 pt-28 md:pt-36 pb-16 md:pb-24 max-w-[1600px] mx-auto w-full relative flex-1">
+            <div class="max-w-5xl flex flex-col items-center text-center gsap-reveal stagger-1 z-10">
+                
+                <!-- 3D Pill Badge linking to AEHB.is-a.dev -->
+                <a href="https://discord.gg/anhemhobach" target="_blank" class="inline-flex items-center bg-[#09090B] border border-zinc-800 text-white rounded-full p-1 pr-3 md:p-1.5 md:pr-4 shadow-[0_3px_0_#000000] md:shadow-[0_4px_0_#000000] hover:translate-y-0.5 hover:shadow-[0_1.5px_0_#000000] md:hover:shadow-[0_2px_0_#000000] active:translate-y-1 active:shadow-none transition-all duration-100 cursor-pointer mb-8 md:mb-10 transform-gpu">
+                    <span class="bg-white text-black text-[8px] md:text-[10px] font-extrabold uppercase px-2 py-0.5 md:px-3 md:py-1 rounded-full flex items-center gap-1 shadow-sm flex-shrink-0">
+                        🔥 RELEASE
+                    </span>
+                    <span class="font-mono text-[9px] md:text-xs text-zinc-300 ml-2 md:ml-3 tracking-wide whitespace-nowrap">
+                        Remastered Web UI by AEHB
+                    </span>
+                    <span class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-white text-black flex items-center justify-center ml-2 md:ml-4 shadow-sm hover:scale-105 transition-transform flex-shrink-0">
+                        <i data-lucide="arrow-up-right" class="w-3 h-3 md:w-3.5 md:h-3.5"></i>
+                    </span>
+                </a>
+
+                <!-- Epic Headline -->
+                <h1 class="font-display text-4xl sm:text-6xl md:text-7xl lg:text-8xl leading-[1.05] font-black tracking-tighter text-brand-dark mb-6 md:mb-8 uppercase">
+                    TỰ ĐỘNG TREO<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-green via-brand-info to-brand-green bg-[length:200%_auto] animate-gradient-x glowing-text drop-shadow-sm">DISCORD QUEST</span><br>
+                    AN TOÀN TUYỆT ĐỐI.
+                </h1>
+                
+                <!-- Subtext (Max 20 words) -->
+                <p class="text-gray-500 font-sans text-sm sm:text-base md:text-lg max-w-xl mb-10 leading-relaxed">
+                    Giả lập luồng stream thông minh. Treo máy nhận thưởng tự động mà không cần tải game hay cài đặt phần mềm.
+                </p>
+
+                <!-- Center Buttons -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 w-full sm:w-auto px-4 sm:px-0">
+                    <button class="open-app-trigger btn-3d-dark px-10 py-4 flex items-center justify-center gap-2.5">
+                        <span class="font-sans text-sm md:text-base font-bold tracking-wide uppercase">Mở Hệ Thống</span>
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+                    
+                    <a href="#guide-section" class="btn-3d-light px-10 py-4 flex items-center justify-center gap-2.5">
+                        <span class="font-sans text-sm md:text-base font-bold tracking-wide uppercase">Xem Hướng Dẫn</span>
+                        <i data-lucide="arrow-down" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Instruction Section -->
+        <section id="guide-section" class="py-10 md:py-24 px-5 md:px-12 lg:px-24 w-full relative z-10">
+            <div class="max-w-[1600px] mx-auto">
+                
+                <div class="mb-8 md:mb-12 md:text-center gsap-reveal stagger-2">
+                    <h2 class="font-display text-2xl md:text-5xl font-black uppercase tracking-tight text-brand-dark mb-3 md:mb-4">Hướng dẫn lấy Token</h2>
+                    <p class="font-sans text-[0.65rem] md:text-sm tracking-widest text-gray-500 uppercase font-bold">Dữ liệu định danh thiết yếu để hệ thống hoạt động</p>
+                </div>
+
+                <!-- Security & Explanation -->
+                <div class="mb-10 md:mb-16 gsap-reveal stagger-2">
+                    <div class="glass-panel p-6 md:p-10 rounded-[2rem] border border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-8 bg-white/80">
+                        <div class="absolute inset-0 bg-gradient-to-br from-brand-dark/5 to-transparent pointer-events-none"></div>
+                        <div class="w-14 h-14 md:w-20 md:h-20 rounded-2xl bg-white flex items-center justify-center flex-shrink-0 border border-gray-100 shadow-sm z-10">
+                            <i data-lucide="shield-check" class="w-7 h-7 md:w-10 md:h-10 text-brand-green"></i>
+                        </div>
+                        <div class="z-10 relative flex-1">
+                            <h3 class="text-brand-dark font-display text-xl md:text-3xl font-bold uppercase tracking-tight mb-3">Token là gì & Có an toàn không?</h3>
+                            <p class="text-gray-600 font-sans text-sm md:text-base leading-relaxed">
+                                <strong>Token</strong> hiểu đơn giản là một "chiếc chìa khóa phụ" giúp hệ thống kết nối với Discord để treo stream và nhận phần thưởng một cách tự động.
+                                <br class="hidden md:block mt-2">
+                                <span class="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 bg-brand-green/10 text-brand-green rounded-full font-bold uppercase tracking-widest text-[0.65rem] md:text-xs">
+                                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Cam Kết An Toàn
+                                </span>
+                                <span class="block mt-2 text-gray-500 text-sm">Mã nguồn mở của chúng tôi <strong>KHÔNG LƯU TRỮ</strong> token của bạn. Mọi tiến trình chạy trực tiếp trên trình duyệt của bạn.</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-6 md:mb-10 gsap-reveal stagger-2">
+                    <!-- Super Fast Card (Bookmarklet) -->
+                    <div class="bg-white p-6 sm:p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] relative overflow-hidden group hover:shadow-xl transition-all duration-500 border border-gray-100 shadow-sm">
+                        <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-brand-green/10 to-transparent rounded-bl-full -z-10"></div>
+                        <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start lg:items-center">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-5">
+                                    <div class="w-10 h-10 rounded-xl bg-brand-green/10 text-brand-green flex items-center justify-center">
+                                        <i data-lucide="mouse-pointer-click" class="w-5 h-5"></i>
+                                    </div>
+                                    <h3 class="font-display text-xl md:text-3xl font-bold uppercase tracking-tight text-brand-dark m-0">Cách Lấy 1 Click (Kéo & Thả)</h3>
+                                </div>
+                                <p class="text-gray-500 font-sans text-sm md:text-base leading-relaxed mb-6">
+                                    Đây là giải pháp cực xịn và dễ nhất, <strong>hoàn toàn không cần F12 hay Console</strong>. Chỉ tốn 3 giây!
+                                </p>
+                                <ol class="list-decimal pl-5 text-sm md:text-base text-gray-700 space-y-3 font-sans leading-relaxed">
+                                    <li>Nhấn <kbd class="px-2 py-1 bg-gray-100 border border-gray-200 rounded-md text-xs font-mono font-bold text-brand-dark">Ctrl + Shift + B</kbd> để hiện thanh Dấu trang.</li>
+                                    <li><strong>Kéo và thả</strong> nút màu đen bên cạnh lên thanh Dấu trang đó.</li>
+                                    <li>Mở tab <a href="https://discord.com/app" target="_blank" class="text-brand-info hover:underline font-bold transition-colors">Discord Web</a> và đăng nhập.</li>
+                                    <li>Bấm vào Dấu trang vừa kéo lên. Token sẽ tự copy!</li>
+                                </ol>
+                            </div>
+                            
+                            <div class="w-full lg:w-1/3 bg-gray-50 rounded-[1.5rem] p-6 relative border border-gray-100 flex flex-col justify-center items-center text-center group-hover:bg-gray-100/50 transition-colors">
+                                <div class="mb-6 flex flex-col items-center">
+                                    <div class="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center text-brand-dark mb-4 group-hover:-translate-y-2 transition-transform duration-300">
+                                        <i data-lucide="arrow-up" class="w-5 h-5"></i>
+                                    </div>
+                                    <p class="text-gray-500 font-sans text-xs md:text-sm leading-relaxed">Kéo nút bên dưới thả lên<br>thanh Dấu trang (Bookmarks)</p>
+                                </div>
+                                <a href="javascript:(function(){var c=function(t){console.log('%cTOKEN CỦA BẠN: '+t,'color:green;font-size:20px;font-weight:bold;');try{var x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();document.execCommand('copy');document.body.removeChild(x);var d=document.createElement('div');d.innerHTML='<div style=&quot;position:fixed;top:20px;right:20px;background:#09090b;color:#fff;padding:16px 20px;border-radius:12px;font-family:system-ui;box-shadow:0 10px 25px rgba(0,0,0,0.5);z-index:999999;display:flex;align-items:center;gap:12px;transform:translateX(120%);transition:transform 0.4s cubic-bezier(0.2,0.8,0.2,1.2);border:1px solid #27272a&quot;><svg width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#10b981&quot; stroke-width=&quot;2&quot;><path d=&quot;M22 11.08V12a10 10 0 1 1-5.93-9.14&quot;/><polyline points=&quot;22 4 12 14.01 9 11.01&quot;/></svg><div><div style=&quot;font-weight:600;font-size:15px;margin-bottom:4px&quot;>Đã Copy Token</div><div style=&quot;color:#a1a1aa;font-size:13px&quot;>Quay lại web Auto và dán (Ctrl+V) nhé!</div></div></div>';document.body.appendChild(d);var a=d.firstChild;setTimeout(function(){a.style.transform='translateX(0)'},10);setTimeout(function(){a.style.transform='translateX(120%)';setTimeout(function(){d.remove()},500)},4000)}catch(e){prompt('Token của bạn đây (Vui lòng bôi đen và nhấn Ctrl+C để copy):',t)}};try{var i=document.createElement('iframe');document.body.appendChild(i);var t=i.contentWindow.localStorage.token;i.remove();if(t)return c(t.replace(/&quot;/g,''))}catch(e){}window.webpackChunkdiscord_app.push([[Math.random()],{},(r)=>{for(var k in r.c){try{var e=r.c[k].exports,m=e&&e.default?e.default:e;if(m&&typeof m.getToken=='function'&&typeof m.setToken=='function'){var t=m.getToken();if(typeof t=='string'&&t.length>20)return c(t)}}catch(err){}}alert('❌ Không tìm thấy token. Đảm bảo bạn đang đăng nhập trên Discord Web.')}])})();" class="btn-3d-dark w-full py-3.5 flex items-center justify-center gap-2 cursor-grab active:cursor-grabbing">
+                                    <i data-lucide="bookmark" class="w-5 h-5"></i>
+                                    Lấy Token Discord
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12 gsap-reveal stagger-3">
+                    
+                    <!-- PC Card -->
+                    <div class="glass-panel p-5 sm:p-8 md:p-12 rounded-2xl md:rounded-[3rem] relative overflow-hidden group hover:bg-white/90 transition-all duration-500 border border-white/80 shadow-sm">
+                        <div class="absolute top-0 right-0 w-32 md:w-48 h-32 md:h-48 bg-brand-info/10 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-700"></div>
+                        <div class="w-10 h-10 md:w-16 md:h-16 rounded-2xl bg-brand-dark text-white flex items-center justify-center mb-5 md:mb-8 shadow-xl shadow-brand-dark/20">
+                            <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </div>
+                        
+                        <div class="flex flex-col lg:flex-row lg:items-center gap-3 mb-5 md:mb-8">
+                            <h3 class="font-display text-xl md:text-3xl font-bold uppercase tracking-tight text-brand-dark m-0">Trên Máy Tính (PC)</h3>
+                            <span class="w-max bg-brand-green/10 text-brand-green font-bold text-[0.65rem] md:text-xs uppercase tracking-widest px-3 py-1.5 rounded-full">★ Khuyên Dùng</span>
+                        </div>
+
+                        <ol class="list-decimal pl-4 md:pl-5 text-sm md:text-base text-gray-700 space-y-3 md:space-y-4 font-sans leading-relaxed">
+                            <li>Mở <strong class="text-brand-dark">Discord Web</strong> trên trình duyệt.</li>
+                            <li>Nhấn <code class="instruction-code">F12</code> hoặc <code class="instruction-code">Ctrl+Shift+I</code> để mở công cụ DevTools.</li>
+                            <li>Chuyển sang tab <strong class="text-brand-dark">Network (Mạng)</strong>.</li>
+                            <li>Gõ <code class="instruction-code">/api/</code> vào ô Filter (Lọc).</li>
+                            <li>Click vào một request bất kỳ hiện ra (VD: <em>science</em>).</li>
+                            <li>Kéo xuống <strong class="text-brand-dark">Request Headers</strong>, tìm và copy đoạn mã tại dòng <strong class="text-brand-dark bg-yellow-100 px-1">Authorization</strong>.</li>
+                        </ol>
+                    </div>
+
+                    <!-- Mobile Card -->
+                    <div class="glass-panel p-5 sm:p-8 md:p-12 rounded-2xl md:rounded-[3rem] relative overflow-hidden group hover:bg-white/90 transition-all duration-500 border border-white/80 shadow-sm flex flex-col h-full">
+                        <div class="absolute top-0 right-0 w-32 md:w-48 h-32 md:h-48 bg-brand-warn/10 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-700"></div>
+                        <div class="w-10 h-10 md:w-16 md:h-16 rounded-2xl bg-white border border-gray-200 text-brand-dark flex items-center justify-center mb-5 md:mb-8 shadow-sm">
+                            <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        </div>
+                        
+                        <div class="flex flex-col lg:flex-row lg:items-center gap-3 mb-5 md:mb-8">
+                            <h3 class="font-display text-xl md:text-3xl font-bold uppercase tracking-tight text-brand-dark m-0">Trên Điện Thoại</h3>
+                        </div>
+
+                        <ol class="list-decimal pl-4 md:pl-5 text-sm md:text-base text-gray-700 space-y-3 md:space-y-4 font-mono leading-relaxed mb-8 flex-1">
+                            <li>Nhấn nút <strong class="text-brand-dark">Copy Mã Điện Thoại</strong> bên dưới.</li>
+                            <li>Dùng Chrome, Safari hoặc trình duyệt bất kỳ truy cập <strong class="text-brand-dark">Discord Web</strong> và đăng nhập.</li>
+                            <li>Bấm vào thanh địa chỉ web, gõ đúng chữ <code class="instruction-code bg-yellow-100">javascript:</code> (phải tự gõ vì trình duyệt chặn copy chữ này).</li>
+                            <li><strong>Dán đoạn mã</strong> vừa copy ngay sau chữ đó và nhấn Đi/Enter. Token sẽ tự lưu vào máy!</li>
+                        </ol>
+
+                        <button id="copy-mobile-btn" class="btn-3d-dark w-full py-4 mt-auto flex items-center justify-center gap-3">
+                            <span id="copy-mobile-text">Copy Mã Điện Thoại</span>
+                            <svg id="copy-mobile-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Telegram Chatbot Integration Card -->
+                <div class="mt-12 md:mt-16 gsap-reveal stagger-2">
+                    <div class="glass-panel p-6 md:p-10 rounded-[2rem] border border-brand-green/20 shadow-lg relative overflow-hidden flex flex-col lg:flex-row items-center gap-6 md:gap-8 bg-white/80 backdrop-blur-md">
+                        <!-- Light glow background -->
+                        <div class="absolute -right-24 -bottom-24 w-80 h-80 bg-brand-info/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+                        
+                        <!-- Left side: Visual Icon -->
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-brand-info/10 flex items-center justify-center flex-shrink-0 border border-brand-info/20 shadow-sm text-brand-info animate-pulse">
+                            <i data-lucide="bot" class="w-8 h-8 md:w-10 md:h-10"></i>
+                        </div>
+                        
+                        <!-- Middle: Details -->
+                        <div class="flex-1 text-center lg:text-left">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-info/10 text-brand-info rounded-full font-bold uppercase tracking-wider text-[10px] md:text-xs">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-info animate-ping"></span> Telegram Chatbot Vệ Tinh
+                            </span>
+                            <h3 class="text-brand-dark font-display text-xl md:text-3xl font-black uppercase tracking-tight mt-3 mb-2">
+                                Auto Quest Completer Chatbot
+                            </h3>
+                            <p class="text-gray-500 font-sans text-sm md:text-base leading-relaxed">
+                                Không muốn mở website hay giữ tab trình duyệt? Chỉ cần chat với bot Telegram <strong class="text-brand-dark font-bold">@leeminhbon cuteee.lov ng bách huy noob and everyone aehb</strong>. 
+                                Gửi Token và bot sẽ tự động treo hoàn thành toàn bộ Discord Quest 24/7 trực tiếp trên mây cực kỳ nhanh gọn và bảo mật!
+                            </p>
+                        </div>
+                        
+                        <!-- Right side: CTA Button -->
+                        <div class="w-full lg:w-auto flex-shrink-0">
+                            <a href="https://discord.gg/anhemhobach" target="_blank" class="btn-3d-dark py-4 px-8 w-full lg:w-auto flex items-center justify-center gap-2">
+                                <span class="font-sans text-sm font-bold uppercase tracking-wider">Trải Nghiệm Chatbot</span>
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="w-full relative z-50 mt-12 mb-12 md:mt-24 md:mb-16 px-4 sm:px-8 md:px-12 lg:px-24">
+            <div class="max-w-[1600px] mx-auto relative">
+                
+                <!-- Massive Background Text -->
+                <div class="absolute inset-0 overflow-hidden flex items-center justify-center -z-10 pointer-events-none opacity-[0.03]">
+                    <span class="font-display font-black text-[15vw] leading-none whitespace-nowrap hidden md:block">OPEN SOURCE</span>
+                </div>
+
+                <!-- Footer Container (Glass Panel) -->
+                <div class="glass-panel rounded-[1.5rem] md:rounded-[4rem] p-5 sm:p-10 md:p-16 border border-white/60 relative overflow-hidden group shadow-2xl shadow-brand-dark/5">
+                    <!-- Decorative Gradient - Optimized GPU transition using Opacity Layering -->
+                    <div class="absolute -bottom-24 -right-24 w-64 h-64 -z-10">
+                        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,200,83,0.15)_0%,transparent_70%)] transition-opacity duration-1000 group-hover:opacity-0"></div>
+                        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,176,255,0.2)_0%,transparent_70%)] opacity-0 transition-opacity duration-1000 group-hover:opacity-100"></div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-end">
+                        
+                        <!-- Left: Big Branding -->
+                        <div class="lg:col-span-5 flex flex-col justify-between h-full">
+                            <div class="mb-6 lg:mb-0">
+                                <h2 class="font-display text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tighter text-brand-dark mb-3 lg:mb-4 leading-[0.9]">
+                                    Discord<br>Quest Auto.
+                                </h2>
+                                <p class="font-mono text-[0.65rem] md:text-sm text-gray-500 tracking-widest uppercase lg:mb-8">
+                                    /// Web UI Edition
+                                </p>
+                            </div>
+                            
+                            <div class="hidden lg:block font-mono text-[0.65rem] text-gray-400 font-bold tracking-[0.2em] uppercase">
+                                © 2026 / NO COMMERCIAL USE
+                            </div>
+                        </div>
+
+                        <!-- Right: Credits Grid -->
+                        <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
+                            
+                            <!-- Remaster Card -->
+                            <div class="bg-white/50 rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-8 border border-white/60 hover:bg-white/80 transition-all duration-300 flex flex-col justify-center">
+                                <p class="font-mono text-[0.6rem] md:text-[0.65rem] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 md:mb-3">Web UI Remastered By</p>
+                                <h4 class="font-display text-xl md:text-3xl font-bold tracking-tight text-brand-dark mb-3">AEHB</h4>
+                                <p class="font-mono text-[0.7rem] md:text-xs text-gray-600 leading-relaxed">
+                                    Bản gốc là công cụ CLI. Tôi thiết kế thêm giao diện Web để ae thao tác dễ dàng trên trình duyệt.
+                                </p>
+                            </div>
+
+                            <!-- Original Author Card -->
+                            <div class="bg-brand-dark rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-8 text-white relative overflow-hidden group/author shadow-xl shadow-brand-dark/10 flex flex-col justify-center">
+                                <!-- Hover effect background -->
+                                <div class="absolute inset-0 bg-gradient-to-br from-brand-green/20 to-brand-info/20 opacity-0 group-hover/author:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                                
+                                <div class="relative z-10">
+                                    <p class="font-mono text-[0.6rem] md:text-[0.65rem] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 md:mb-3">Original CLI Author</p>
+                                    <h4 class="font-display text-xl md:text-3xl font-bold tracking-tight text-white mb-5">AEHB</h4>
+                                    
+                                    <a href="https://discord.gg/anhemhobach" target="_blank" class="btn-3d-glass w-full py-3 px-4 flex items-center justify-center sm:justify-start gap-3">
+                                        <i data-lucide="Discord" class="w-6 h-6 md:w-7 md:h-7 flex-shrink-0"></i>
+                                        <div class="flex flex-col text-left">
+                                            <span class="font-mono text-[0.7rem] md:text-xs font-bold uppercase tracking-wider text-white whitespace-nowrap">discord Repo</span>
+                                            <span class="font-mono text-[0.55rem] md:text-[0.6rem] text-brand-info font-bold uppercase mt-0.5 animate-pulse transition-colors whitespace-nowrap">★ Cho xin mem nhé!</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                        
+                        <!-- Mobile copyright -->
+                        <div class="block lg:hidden mt-6 font-mono text-[0.65rem] text-gray-400 font-bold tracking-[0.2em] uppercase text-center w-full">
+                            © 2026 / NO COMMERCIAL USE
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- VIEW 2: APP / LOGS -->
+    <div id="view-app" class="hidden min-h-screen flex-col px-5 py-12 md:py-16 md:px-12 lg:px-24 max-w-[1600px] mx-auto w-full">
+        
+        <!-- Adjusted grid to give console more space (lg:col-span-8 instead of 7) -->
+        <div class="w-full flex-1 flex flex-col lg:grid lg:grid-cols-12 gap-10 md:gap-12 lg:gap-12">
+            
+            <!-- Left Column: Controls (lg:col-span-4) -->
+            <div class="lg:col-span-4 flex flex-col pt-2 md:pt-4 relative z-20">
+                
+                <!-- Back Button -->
+                <button id="nav-back" class="btn-3d-light py-2.5 px-4 text-xs mb-10 w-max flex items-center gap-2">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Quay Về Trang Chủ</span>
+                </button>
+
+                <!-- Token Input Section -->
+                <div class="mb-12 md:mb-16 gsap-reveal stagger-1">
+                    <div class="flex justify-between items-end mb-3 md:mb-4">
+                        <label for="token-input" class="block font-mono font-bold text-[0.65rem] md:text-xs tracking-[0.2em] text-gray-500 uppercase">Token Định Danh</label>
+                        <span class="text-[0.65rem] md:text-xs font-mono text-gray-400 flex items-center gap-1">
+                            <i data-lucide="lock" class="w-3 h-3"></i>
+                            Encrypted
+                        </span>
+                    </div>
+                    <div class="relative w-full">
+                        <input type="password" id="token-input" placeholder="Paste Token..." class="token-input w-full font-mono text-2xl md:text-4xl font-bold tracking-tight bg-transparent pr-24">
+                        <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 text-gray-400">
+                            <!-- Toggle Visibility Button -->
+                            <button id="toggle-token-btn" class="btn-3d-icon p-2" title="Hiện/Ẩn Token">
+                                <i data-lucide="eye" id="eye-icon" class="w-5 h-5 md:w-6 md:h-6"></i>
+                                <i data-lucide="eye-off" id="eye-slash-icon" class="w-5 h-5 md:w-6 md:h-6 hidden"></i>
+                            </button>
+                            <!-- Clear Button -->
+                            <button id="clear-token-btn" class="btn-3d-icon p-2" title="Xóa Token">
+                                <i data-lucide="x" class="w-5 h-5 md:w-6 md:h-6"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Board -->
+                <div class="mb-12 md:mb-16 gsap-reveal stagger-2">
+                    <div class="font-mono text-[0.65rem] md:text-xs font-bold tracking-[0.2em] text-gray-500 uppercase mb-4 md:mb-6">Điều Khiển Tiến Trình</div>
+                    <div id="action-wrapper" class="relative">
+                        <button id="action-start" class="btn-3d-green w-full py-5 px-8 text-2xl md:text-3xl flex items-center justify-center gap-4">
+                            <span>BẮT ĐẦU</span>
+                            <i data-lucide="play" class="w-6 h-6 md:w-8 md:h-8"></i>
+                        </button>
+                        <button id="action-stop" class="btn-3d-red w-full py-5 px-8 text-2xl md:text-3xl hidden items-center justify-center gap-4">
+                            <span>DỪNG LẠI</span>
+                            <i data-lucide="square" class="w-6 h-6 md:w-8 md:h-8"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Visual Quest Info Card -->
+                <div id="quest-info-card" class="hidden mb-6 p-4 md:p-5 rounded-2xl border border-white/60 bg-white/70 shadow-lg shadow-brand-dark/5 backdrop-blur-md transition-all duration-500 relative overflow-hidden transform-gpu">
+                    <div class="absolute -top-10 -right-10 w-24 h-24 bg-brand-green/5 rounded-full pointer-events-none"></div>
+                    <div class="flex items-center gap-4 relative z-10">
+                        <div id="quest-icon-wrapper" class="w-11 h-11 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center justify-center flex-shrink-0 text-brand-green">
+                            <i data-lucide="gamepad-2" class="w-5 h-5" id="quest-icon"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <span class="block font-mono text-[9px] font-bold text-gray-400 uppercase tracking-widest" id="quest-type-badge">GAME QUEST</span>
+                            <h4 class="font-display text-xs md:text-sm font-bold text-brand-dark truncate mt-0.5" id="quest-title">Tên nhiệm vụ...</h4>
+                            <span class="block font-mono text-[10px] text-gray-500 mt-1" id="quest-duration">Tiến độ: 0% (0s / 0s)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Quest Board (I.1) -->
+                <div id="quest-board-card" class="hidden mb-6 p-4 md:p-5 rounded-2xl border border-white/60 bg-white/70 shadow-lg shadow-brand-dark/5 backdrop-blur-md transition-all duration-500 relative overflow-hidden transform-gpu">
+                    <div class="flex items-center justify-between mb-4 border-b border-gray-200/50 pb-3">
+                        <h4 class="font-display text-xs font-black uppercase tracking-wider text-brand-dark flex items-center gap-2">
+                            <i data-lucide="list-todo" class="w-4 h-4 text-brand-green"></i> Danh Sách Nhiệm Vụ
+                        </h4>
+                        <span id="quest-board-count" class="bg-gray-100 text-gray-500 font-mono text-[9px] font-bold px-2 py-0.5 rounded-full">0 Quest</span>
+                    </div>
+                    
+                    <!-- Loading Skeleton -->
+                    <div id="quest-board-skeleton" class="space-y-3">
+                        <div class="h-10 bg-gray-200/20 rounded-xl animate-pulse"></div>
+                        <div class="h-10 bg-gray-200/20 rounded-xl animate-pulse"></div>
+                        <div class="h-10 bg-gray-200/20 rounded-xl animate-pulse"></div>
+                    </div>
+                    
+                    <!-- Quests List Container -->
+                    <div id="quest-board-list" class="hidden space-y-2.5 max-h-[200px] overflow-y-auto pr-1">
+                        <!-- Quest items injected here -->
+                    </div>
+                </div>
+
+                <!-- Status Indicator -->
+                <div class="gsap-reveal stagger-3 mt-auto pb-8 lg:pb-0">
+                    <div class="font-mono text-[0.65rem] md:text-xs font-bold tracking-[0.2em] text-gray-500 uppercase mb-3 md:mb-4">Trạng Thái Hệ Thống</div>
+                    <div id="status-indicator" class="font-display text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tighter text-gray-300 transition-all duration-500">
+                        ĐANG CHỜ LỆNH
+                    </div>
+                    
+                    <!-- Visual Progress Bar Wrapper -->
+                    <div id="progress-wrapper" class="hidden mt-4 w-full bg-gray-200/50 rounded-full h-3 border border-gray-300/40 p-0.5 overflow-hidden shadow-inner relative transition-all duration-500 transform-gpu">
+                        <div id="progress-bar" class="bg-gradient-to-r from-brand-green via-brand-info to-brand-green bg-[length:200%_auto] animate-gradient-x h-full rounded-full w-0 transition-all duration-500 shadow-[0_0_10px_rgba(0,200,83,0.4)]"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Terminal (Expanded to lg:col-span-8) -->
+            <div class="lg:col-span-8 flex flex-col gsap-reveal stagger-4 min-h-[55vh] md:min-h-[60vh] lg:min-h-[80vh] relative z-10">
+                <div class="glass-panel flex-1 rounded-3xl md:rounded-[2rem] flex flex-col overflow-hidden border border-white shadow-[0_20px_50px_rgba(0,0,0,0.05)] relative">
+                    
+                    <!-- Terminal Header -->
+                    <div class="bg-white/60 border-b border-white/50 px-5 md:px-6 py-3 md:py-4 flex items-center justify-between backdrop-blur-md">
+                        <div class="flex space-x-2 md:space-x-2.5">
+                            <div class="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full bg-[#FF5F56] border border-[#E0443E]"></div>
+                            <div class="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full bg-[#FFBD2E] border border-[#DEA123]"></div>
+                            <div class="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full bg-[#27C93F] border border-[#1AAB29]"></div>
+                        </div>
+                        <div class="flex items-center space-x-2 md:space-x-3">
+                            <h3 class="font-mono font-bold text-[0.65rem] md:text-xs uppercase tracking-[0.2em] text-gray-500">Console Log</h3>
+                            <div id="live-dot" class="w-2 h-2 md:w-2.5 md:h-2.5 bg-gray-300 rounded-full status-ring transition-colors"></div>
+                        </div>
+                    </div>
+
+                    <!-- Terminal Body -->
+                    <div class="flex-1 relative bg-white/30 backdrop-blur-sm scanlines">
+                        <div id="log-container" class="h-full overflow-y-auto terminal-feed absolute inset-0 p-5 md:p-8">
+                            <div class="opacity-60 italic mt-2 text-gray-500 font-mono flex items-center" id="empty-log-msg">
+                                <span class="animate-pulse mr-2 font-black text-brand-dark">_</span> Hệ thống đang sẵn sàng.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Native Smooth Scroll for Anchors
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            
+            // Init Lucide
+            lucide.createIcons();
+            
+            // Peak UI Animations (GSAP)
+            gsap.utils.toArray('.gsap-reveal').forEach((el, i) => {
+                gsap.fromTo(el, 
+                    { autoAlpha: 0, y: 40 },
+                    { duration: 1.2, autoAlpha: 1, y: 0, ease: 'power4.out', delay: i * 0.1 }
+                );
+            });
+
+            // Floating Header Scroll Logic
+            const header = document.querySelector('.floating-header');
+            if (header) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 40) {
+                        header.classList.add('scrolled');
+                    } else {
+                        header.classList.remove('scrolled');
+                    }
+                });
+            }
+
+            const viewIntro = document.getElementById('view-intro');
+            const viewApp = document.getElementById('view-app');
+            const navToApp = document.getElementById('nav-to-app');
+            const navBack = document.getElementById('nav-back');
+            const copyMobileBtn = document.getElementById('copy-mobile-btn');
+
+            if (copyMobileBtn) {
+                copyMobileBtn.addEventListener('click', async () => {
+                    const codeToCopy = "(function(){var c=function(t){console.log('%cTOKEN CỦA BẠN: '+t,'color:green;font-size:20px;font-weight:bold;');try{var x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();document.execCommand('copy');document.body.removeChild(x);var d=document.createElement('div');d.innerHTML='<div style=\"position:fixed;top:20px;right:20px;background:#09090b;color:#fff;padding:16px 22px;border-radius:16px;font-family:system-ui,-apple-system,sans-serif;box-shadow:0 10px 25px rgba(0,0,0,0.3);z-index:999999;display:flex;align-items:center;gap:14px;transform:translateX(120%);transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);border:1px solid #27272a;border-bottom:4px solid #000000\"><div style=\"display:flex;align-items:center;justify-content:center;background:#16a34a;width:32px;height:32px;border-radius:50%;border-bottom:2px solid #14532d;flex-shrink:0\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#fff\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></div><div><div style=\"font-weight:700;font-size:15px;margin-bottom:3px;letter-spacing:0.02em\">Đã Copy Token</div><div style=\"color:#a1a1aa;font-size:12px;font-family:monospace\">Quay lại web Auto và dán (Ctrl+V) nhé!</div></div></div>';document.body.appendChild(d);var a=d.firstChild;setTimeout(function(){a.style.transform='translateX(0)'},10);setTimeout(function(){a.style.transform='translateX(120%)';setTimeout(function(){d.remove()},500)},4000)}catch(e){prompt('Token của bạn đây (Sao chép đoạn dưới):',t)}};try{var i=document.createElement('iframe');document.body.appendChild(i);var t=i.contentWindow.localStorage.token;i.remove();if(t)return c(t.replace(/\"/g,''))}catch(e){}window.webpackChunkdiscord_app.push([[Math.random()],{},(r)=>{for(var k in r.c){try{var e=r.c[k].exports,m=e&&e.default?e.default:e;if(m&&typeof m.getToken=='function'&&typeof m.setToken=='function'){var t=m.getToken();if(typeof t=='string'&&t.length>20)return c(t)}}catch(err){}}alert('❌ Không tìm thấy token. Đảm bảo bạn đang đăng nhập trên Discord Web.')}])})();";
+                    try {
+                        await navigator.clipboard.writeText(codeToCopy);
+                        const textEl = document.getElementById('copy-mobile-text');
+                        const iconEl = document.getElementById('copy-mobile-icon');
+                        
+                        textEl.textContent = 'Đã Copy Mã!';
+                        iconEl.innerHTML = '<i data-lucide="check" class="w-5 h-5"></i>'; lucide.createIcons();
+                        copyMobileBtn.classList.remove('btn-3d-dark');
+                        copyMobileBtn.classList.add('btn-3d-green');
+
+                        setTimeout(() => {
+                            textEl.textContent = 'Copy Mã Điện Thoại';
+                            iconEl.innerHTML = '<i data-lucide="copy" class="w-5 h-5"></i>'; lucide.createIcons();
+                            copyMobileBtn.classList.add('btn-3d-dark');
+                            copyMobileBtn.classList.remove('btn-3d-green');
+                        }, 3000);
+                    } catch (err) {
+                        alert('Không thể copy tự động. Vui lòng thử lại!');
+                    }
+                });
+            }
+
+            // Elements
+            const tokenInput = document.getElementById('token-input');
+            const actionStart = document.getElementById('action-start');
+            const actionStop = document.getElementById('action-stop');
+            const statusIndicator = document.getElementById('status-indicator');
+            const logContainer = document.getElementById('log-container');
+            const liveDot = document.getElementById('live-dot');
+            const emptyLogMsg = document.getElementById('empty-log-msg');
+
+            let currentToken = '';
+            let logNextIdx = 0;
+            let pollInterval = null;
+
+            // Input actions
+            const toggleTokenBtn = document.getElementById('toggle-token-btn');
+            const clearTokenBtn = document.getElementById('clear-token-btn');
+            const eyeIcon = document.getElementById('eye-icon');
+            const eyeSlashIcon = document.getElementById('eye-slash-icon');
+
+            if (toggleTokenBtn && tokenInput) {
+                toggleTokenBtn.addEventListener('click', () => {
+                    if (tokenInput.type === 'password') {
+                        tokenInput.type = 'text';
+                        eyeIcon.classList.add('hidden');
+                        eyeSlashIcon.classList.remove('hidden');
+                    } else {
+                        tokenInput.type = 'password';
+                        eyeIcon.classList.remove('hidden');
+                        eyeSlashIcon.classList.add('hidden');
+                    }
+                });
+            }
+
+            if (clearTokenBtn && tokenInput) {
+                clearTokenBtn.addEventListener('click', () => {
+                    tokenInput.value = '';
+                    currentToken = '';
+                    localStorage.removeItem('discord_quest_token');
+                    tokenInput.focus();
+                });
+            }
+
+            // INIT: Auto fill token from localStorage
+            const savedToken = localStorage.getItem('discord_quest_token');
+            if (savedToken) {
+                tokenInput.value = savedToken;
+                currentToken = savedToken;
+            }
+
+            // Navigate to App View (Gán cho toàn bộ các nút kích hoạt mở app)
+            document.querySelectorAll('.open-app-trigger').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    viewIntro.classList.add('hidden');
+                    viewApp.classList.remove('hidden');
+                    viewApp.classList.add('flex');
+                    window.scrollTo(0, 0);
+                    
+                    if (!currentToken) {
+                        tokenInput.focus();
+                    }
+                });
+            });
+
+            // Navigate Back
+            if (navBack) {
+                navBack.addEventListener('click', () => {
+                    if (isRunning) {
+                        const confirmLeave = confirm("Tiến trình đang chạy! Nếu bạn quay lại, hệ thống sẽ dừng. Bạn có chắc chắn muốn thoát?");
+                        if (!confirmLeave) return;
+                        actionStop.click();
+                    }
+                    viewApp.classList.add('hidden');
+                    viewApp.classList.remove('flex');
+                    viewIntro.classList.remove('hidden');
+                    window.scrollTo(0, 0);
+                });
+            }
+
+            // Prevent accidental tab close
+            window.addEventListener('beforeunload', (e) => {
+                if (isRunning) {
+                    e.preventDefault();
+                    e.returnValue = 'Hệ thống đang chạy, bạn có chắc chắn muốn thoát?';
+                }
+            });
+
+            // Token input change
+            tokenInput.addEventListener('change', () => {
+                currentToken = tokenInput.value.trim();
+                if (currentToken) {
+                    localStorage.setItem('discord_quest_token', currentToken);
+                    resetLogs();
+                }
+            });
+
+            function resetLogs() {
+                logContainer.innerHTML = '';
+            }
+            
+            function getCurrentTime() {
+                const now = new Date();
+                return now.getHours().toString().padStart(2, '0') + ':' + 
+                       now.getMinutes().toString().padStart(2, '0') + ':' + 
+                       now.getSeconds().toString().padStart(2, '0');
+            }
+
+            function getLogStyle(level) {
+                switch(level) {
+                    case 'info': return 'color: #09090B; font-weight: 600;';
+                    case 'ok': return 'color: #00C853; font-weight: 700;';
+                    case 'warn': return 'color: #ffab00; font-weight: 700;';
+                    case 'error': return 'color: #d50000; font-weight: 700;';
+                    case 'progress': return 'color: #00b0ff; font-weight: 600;';
+                    case 'debug': return 'color: #9CA3AF;';
+                    default: return 'color: #4B5563;';
+                }
+            }
+
+            function appendLog(msg, level="info") {
+                if (emptyLogMsg && emptyLogMsg.parentNode) {
+                    emptyLogMsg.parentNode.removeChild(emptyLogMsg);
+                }
+
+                // Giới hạn log tối đa 100 dòng mới nhất để tối ưu bộ nhớ DOM (chống lag GPU/CPU)
+                if (logContainer.childElementCount > 100) {
+                    logContainer.removeChild(logContainer.firstChild);
+                }
+
+                const row = document.createElement('div');
+                row.className = 'log-row fade-in';
+                row.style.animationDuration = '0.3s';
+                
+                const tsCol = document.createElement('div');
+                tsCol.className = 'font-mono text-gray-400 text-[0.65rem] md:text-xs font-bold whitespace-nowrap pt-1';
+                tsCol.textContent = getCurrentTime();
+                
+                const msgCol = document.createElement('div');
+                msgCol.className = 'break-words';
+                msgCol.style = getLogStyle(level);
+                msgCol.textContent = msg;
+                
+                row.appendChild(tsCol);
+                row.appendChild(msgCol);
+                
+                logContainer.appendChild(row);
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+
+            // --- PEAK UX: Web Worker for bypass background throttling ---
+            const workerCode = `
+                let timerId = null;
+                self.onmessage = function(e) {
+                    if (e.data.command === 'start') {
+                        if (timerId) clearInterval(timerId);
+                        timerId = setInterval(() => postMessage('tick'), e.data.interval);
+                    } else if (e.data.command === 'stop') {
+                        if (timerId) clearInterval(timerId);
+                        timerId = null;
+                    }
+                };
+            `;
+            const blob = new Blob([workerCode], {type: 'application/javascript'});
+            const timerWorker = new Worker(URL.createObjectURL(blob));
+
+            // --- PEAK UX: Wake Lock API ---
+            let wakeLock = null;
+            async function requestWakeLock() {
+                try {
+                    if ('wakeLock' in navigator) {
+                        wakeLock = await navigator.wakeLock.request('screen');
+                        appendLog("💡 Đã bật chế độ chống tắt màn hình (Wake Lock).", "debug");
+                        
+                        wakeLock.addEventListener('release', () => {
+                            if (isRunning && document.visibilityState === 'visible') {
+                                requestWakeLock(); // Re-request if still running
+                            }
+                        });
+                    }
+                } catch (err) {}
+            }
+            function releaseWakeLock() {
+                if (wakeLock !== null) {
+                    wakeLock.release().then(() => wakeLock = null).catch(() => {});
+                }
+            }
+
+            // --- PEAK UX: Tab Visibility Warning ---
+            const originalTitle = document.title;
+            document.addEventListener("visibilitychange", () => {
+                if (document.hidden && isRunning) {
+                    document.title = "⚠️ Đang treo - Đừng tắt web!";
+                } else {
+                    document.title = originalTitle;
+                    if (isRunning && wakeLock === null) requestWakeLock();
+                }
+            });
+
+            // --- PEAK UX: Confetti ---
+            function triggerConfetti() {
+                if (window.confetti) {
+                    const duration = 3 * 1000;
+                    const end = Date.now() + duration;
+                    (function frame() {
+                        confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#00C853', '#00b0ff', '#ffffff'] });
+                        confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#00C853', '#00b0ff', '#ffffff'] });
+                        if (Date.now() < end) requestAnimationFrame(frame);
+                    }());
+                }
+            }
+
+            let isRunning = false;
+            let activeQuest = null;
+
+            actionStart.addEventListener('click', async () => {
+                currentToken = tokenInput.value.trim();
+                // --- PEAK UX: Input Validation Shake ---
+                if (!currentToken || currentToken.length < 50) {
+                    tokenInput.classList.remove('shake-error');
+                    void tokenInput.offsetWidth; // force reflow
+                    tokenInput.classList.add('shake-error');
+                    setTimeout(() => tokenInput.classList.remove('shake-error'), 500);
+                    tokenInput.focus();
+                    return;
+                }
+                localStorage.setItem('discord_quest_token', currentToken);
+                resetLogs();
+                isRunning = true;
+                updateUIState(true);
+
+                // Hiển thị Quest Board và bật Skeleton Loader (I.1)
+                const qBoardCard = document.getElementById('quest-board-card');
+                const qBoardSkeleton = document.getElementById('quest-board-skeleton');
+                const qBoardList = document.getElementById('quest-board-list');
+                if (qBoardCard) qBoardCard.classList.remove('hidden');
+                if (qBoardSkeleton) qBoardSkeleton.classList.remove('hidden');
+                if (qBoardList) qBoardList.classList.add('hidden');
+
+                await requestWakeLock();
+                await initQuestFlow();
+            });
+
+            actionStop.addEventListener('click', () => {
+                isRunning = false;
+                timerWorker.postMessage({ command: 'stop' });
+                releaseWakeLock();
+                appendLog("Đã yêu cầu dừng tiến trình.", "warn");
+                
+                // Ẩn Quest Card, Progress Bar và Quest Board khi dừng (I.1)
+                const card = document.getElementById('quest-info-card');
+                const pWrapper = document.getElementById('progress-wrapper');
+                const qBoardCard = document.getElementById('quest-board-card');
+                if (card) card.classList.add('hidden');
+                if (pWrapper) pWrapper.classList.add('hidden');
+                if (qBoardCard) qBoardCard.classList.add('hidden');
+
+                updateUIState(false, true);
+                setTimeout(() => updateUIState(false), 1000);
+            });
+
+            function updateUIState(isRunning, isTransitioning = false) {
+                if (isRunning) {
+                    actionStart.classList.add('hidden');
+                    actionStart.classList.remove('flex');
+                    actionStop.classList.remove('hidden');
+                    actionStop.classList.add('flex');
+                    
+                    tokenInput.disabled = true;
+                    tokenInput.classList.add('opacity-50');
+                    
+                    statusIndicator.textContent = 'ĐANG HOẠT ĐỘNG';
+                    statusIndicator.classList.remove('text-gray-300', 'text-brand-red');
+                    statusIndicator.classList.add('text-brand-green', 'pulse-text');
+                    
+                    liveDot.classList.remove('bg-gray-300', 'text-gray-300');
+                    liveDot.classList.add('bg-brand-green', 'text-brand-green');
+                    
+                    if (emptyLogMsg) emptyLogMsg.style.display = 'none';
+                } else {
+                    actionStop.classList.add('hidden');
+                    actionStop.classList.remove('flex');
+                    actionStart.classList.remove('hidden');
+                    actionStart.classList.add('flex');
+                    
+                    tokenInput.disabled = false;
+                    tokenInput.classList.remove('opacity-50');
+                    
+                    statusIndicator.textContent = isTransitioning ? 'ĐANG DỪNG...' : 'TẠM DỪNG';
+                    statusIndicator.classList.remove('text-brand-green', 'pulse-text', 'text-gray-300');
+                    statusIndicator.classList.add('text-brand-red');
+                    
+                    liveDot.classList.remove('bg-brand-green', 'text-brand-green');
+                    liveDot.classList.add('bg-gray-300', 'text-gray-300');
+                }
+            }
+
+            async function initQuestFlow() {
+                if (!isRunning) return;
+                appendLog("Đang kiểm tra tính hợp lệ của Token...", "info");
+                try {
+                    const res = await fetch('/api/quest/init', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token: currentToken })
+                    });
+                    
+                    if (res.status === 401) {
+                        appendLog("❌ Token đã hết hạn hoặc không hợp lệ. Vui lòng lấy Token mới!", "error");
+                        actionStop.click();
+                        return;
+                    }
+                    appendLog("✅ Token hợp lệ. Đang tải danh sách nhiệm vụ...", "ok");
+
+                    const data = await res.json();
+                    
+                    // Render Quest Board (I.1)
+                    const qBoardSkeleton = document.getElementById('quest-board-skeleton');
+                    const qBoardList = document.getElementById('quest-board-list');
+                    const qBoardCount = document.getElementById('quest-board-count');
+                    
+                    if (qBoardSkeleton && qBoardList && qBoardCount) {
+                        if (data.quests && data.quests.length > 0) {
+                            qBoardCount.textContent = `${data.quests.length} Quest`;
+                            qBoardList.innerHTML = '';
+                            data.quests.forEach(q => {
+                                const item = document.createElement('div');
+                                item.className = 'flex items-center justify-between p-2.5 rounded-xl border border-gray-200/40 bg-white/40 hover:bg-white/70 transition-all text-[11px]';
+                                
+                                let statusBadge = '';
+                                if (q.completed) {
+                                    statusBadge = '<span class="font-mono text-[9px] font-bold px-2 py-0.5 rounded-full bg-brand-green/10 text-brand-green">ĐÃ XONG</span>';
+                                } else if (data.quest && q.id === data.quest.id) {
+                                    statusBadge = '<span class="font-mono text-[9px] font-bold px-2 py-0.5 rounded-full bg-brand-info/10 text-brand-info animate-pulse">ĐANG TREO</span>';
+                                } else {
+                                    statusBadge = '<span class="font-mono text-[9px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">KHẢ DỤNG</span>';
+                                }
+                                
+                                const isVideo = q.task_type.includes('VIDEO');
+                                const iconName = isVideo ? 'film' : 'gamepad-2';
+                                
+                                item.innerHTML = `
+                                    <div class="flex items-center gap-2.5 min-w-0">
+                                        <div class="w-6 h-6 rounded-lg bg-white border border-gray-200/50 flex items-center justify-center flex-shrink-0 text-gray-500">
+                                            <i data-lucide="${iconName}" class="w-3.5 h-3.5"></i>
+                                        </div>
+                                        <span class="font-sans font-semibold text-gray-700 truncate" title="${q.name}">${q.name}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        <span class="text-gray-400 font-mono text-[9px]">${Math.round(q.done)}s/${q.needed}s</span>
+                                        ${statusBadge}
+                                    </div>
+                                `;
+                                qBoardList.appendChild(item);
+                            });
+                            lucide.createIcons();
+                        } else {
+                            qBoardCount.textContent = '0 Quest';
+                            qBoardList.innerHTML = '<div class="text-center py-4 text-gray-400 text-xs font-sans">Không tìm thấy Quest nào.</div>';
+                        }
+                        qBoardSkeleton.classList.add('hidden');
+                        qBoardList.classList.remove('hidden');
+                    }
+
+                    if (data.status === 'no_quests') {
+                        appendLog("Không còn quest nào chưa hoàn thành cần làm.", "warn");
+                        actionStop.click();
+                        return;
+                    }
+
+                    if (data.status === 'active') {
+                        activeQuest = data.quest;
+                        appendLog(`Bắt đầu: ${activeQuest.name} (${activeQuest.task_type})`, "ok");
+                        
+                        // Cập nhật và hiển thị Quest Info Card
+                        const card = document.getElementById('quest-info-card');
+                        const qTitle = document.getElementById('quest-title');
+                        const qType = document.getElementById('quest-type-badge');
+                        const qDuration = document.getElementById('quest-duration');
+                        const qIcon = document.getElementById('quest-icon');
+                        
+                        if (card && qTitle && qType && qDuration && qIcon) {
+                            qTitle.textContent = activeQuest.name;
+                            const isVideo = activeQuest.task_type.includes("VIDEO");
+                            qType.textContent = isVideo ? "VIDEO QUEST" : "GAME QUEST";
+                            
+                            // Cập nhật icon Lucide
+                            qIcon.setAttribute('data-lucide', isVideo ? 'film' : 'gamepad-2');
+                            lucide.createIcons();
+                            
+                            card.classList.remove('hidden');
+                        }
+
+                        // Hiển thị Progress Bar
+                        const pWrapper = document.getElementById('progress-wrapper');
+                        const pBar = document.getElementById('progress-bar');
+                        if (pWrapper && pBar) {
+                            pWrapper.classList.remove('hidden');
+                            pBar.style.width = '0%';
+                        }
+
+                        startQuestLoop();
+                    }
+                } catch (error) {
+                    appendLog("Lỗi kết nối máy chủ: " + error.message, "error");
+                    actionStop.click();
+                }
+            }
+
+            function startQuestLoop() {
+                if (!isRunning || !activeQuest) return;
+                
+                const isVideo = activeQuest.task_type.includes("VIDEO");
+                const intervalMs = isVideo ? 6000 : 20000;
+                
+                let done = activeQuest.done || 0;
+                const needed = activeQuest.needed || 1;
+
+                timerWorker.postMessage({ command: 'stop' });
+                
+                timerWorker.onmessage = async () => {
+                    if (!isRunning) {
+                        timerWorker.postMessage({ command: 'stop' });
+                        return;
+                    }
+                    
+                    try {
+                        if (isVideo) {
+                            done += 6; 
+                            const timestamp = Math.min(needed, done + Math.random());
+                            
+                            const res = await fetch('/api/quest/progress_video', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ token: currentToken, id: activeQuest.id, timestamp: timestamp })
+                            });
+                            const data = await res.json();
+                            
+                            const pct = Math.min(100, Math.round((timestamp / needed) * 100));
+                            
+                            // Cập nhật Progress Bar & Duration
+                            const pBar = document.getElementById('progress-bar');
+                            const qDuration = document.getElementById('quest-duration');
+                            if (pBar) pBar.style.width = `${pct}%`;
+                            if (qDuration) qDuration.textContent = `Tiến độ: ${pct}% (${Math.round(timestamp)}s / ${needed}s)`;
+
+                            if (data.completed || timestamp >= needed) {
+                                timerWorker.postMessage({ command: 'stop' });
+                                triggerConfetti();
+                                appendLog(`✅ Hoàn thành: ${activeQuest.name}`, "ok");
+                                setTimeout(initQuestFlow, 2000); 
+                                return;
+                            }
+                            
+                            const bar = getProgressBar(timestamp, needed);
+                            const funMsgs = ["Đồng bộ tín hiệu Video Stream...", "Bảo trì kết nối Server...", "Duy trì luồng dữ liệu giả lập...", "Đang phân tích gói tin..."];
+                            const randomMsg = funMsgs[Math.floor(Math.random() * funMsgs.length)];
+                            appendLog(`🎬 ${bar} ${pct}% | ${randomMsg}`, "progress");
+                        } else {
+                            const res = await fetch('/api/quest/heartbeat', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ 
+                                    token: currentToken, 
+                                    id: activeQuest.id, 
+                                    stream_key: activeQuest.stream_key,
+                                    task_type: activeQuest.task_type
+                                })
+                            });
+                            const data = await res.json();
+                            if (data.done !== -1) {
+                                done = data.done;
+                            } else {
+                                done += 20; // Fallback local estimation if backend doesn't return progress
+                            }
+                            
+                            const pct = Math.min(100, Math.round((done / needed) * 100));
+                            
+                            // Cập nhật Progress Bar & Duration
+                            const pBar = document.getElementById('progress-bar');
+                            const qDuration = document.getElementById('quest-duration');
+                            if (pBar) pBar.style.width = `${pct}%`;
+                            if (qDuration) qDuration.textContent = `Tiến độ: ${pct}% (${done}s / ${needed}s)`;
+
+                            if (data.completed || done >= needed) {
+                                timerWorker.postMessage({ command: 'stop' });
+                                triggerConfetti();
+                                appendLog(`✅ Hoàn thành: ${activeQuest.name}`, "ok");
+                                setTimeout(initQuestFlow, 2000);
+                                return;
+                            }
+                            
+                            const bar = getProgressBar(done, needed);
+                            const funMsgs = ["Gửi tín hiệu Heartbeat thành công...", "Đồng bộ tiến trình chơi Game...", "Duy trì kết nối Gateway...", "Trạng thái Client hợp lệ..."];
+                            const randomMsg = funMsgs[Math.floor(Math.random() * funMsgs.length)];
+                            appendLog(`🎮 ${bar} ${pct}% | ${randomMsg}`, "progress");
+                        }
+                    } catch (e) {
+                        // ignore network errors and retry next tick
+                    }
+                };
+                
+                timerWorker.postMessage({ command: 'start', interval: intervalMs });
+                
+                appendLog(`=========================================`, "info");
+                appendLog(isVideo ? `🚀 ĐANG CHẠY NHA CON/ THẰNG LỒN` : `🚀 AUTO GAME HEARTBEAT ACTIVATED`, "ok");
+                appendLog(`=========================================`, "info");
+            }
+
+            function getProgressBar(current, total, length = 16) {
+                const filled = Math.floor(Math.min(1, current / total) * length);
+                const empty = length - filled;
+                return '[' + '█'.repeat(Math.max(0, filled)) + '░'.repeat(Math.max(0, empty)) + ']';
+            }
+
+            // Fetch discord Stars dynamically
+            const discordStarsBtn = document.getElementById('discord-stars-btn');
+            if (discordStarsBtn) {
+                fetch('https://api.discord.com/repos/AEHB/Discord-Quest-Auto-Completer')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.stargazers_count !== undefined) {
+                            const starCountEl = document.getElementById('discord-stars-count');
+                            if (starCountEl) {
+                                starCountEl.textContent = `★ ${data.stargazers_count}`;
+                            }
+                        }
+                    })
+                    .catch(() => {});
+            }
+
+        });
+    </script>
+</body>
+</html>
